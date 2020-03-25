@@ -1,0 +1,18 @@
+.Home-Page {
+  display: flex;
+  padding: 16px;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.Home-Tabs {
+  display: flex;
+  justify-content: flex-start;
+}
+
+.Home-Popular {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
+}
