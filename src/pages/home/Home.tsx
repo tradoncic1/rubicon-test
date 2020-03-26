@@ -1,4 +1,5 @@
 import posterPlaceholder from "../../assets/posterPlaceholder.png";
+import { changeSearch, changeTab } from "../../redux/actions";
 import InfoCard from "../../components/infoCard/InfoCard";
 import { MovieGenreLookup } from "../../MovieGenreLookup";
 import { ShowGenreLookup } from "../../ShowGenreLookup";
@@ -8,14 +9,14 @@ import React, { useEffect, useState } from "react";
 import { getImageOriginal } from "../../utilities";
 import movies from "../../api/movies";
 import shows from "../../api/shows";
+import { connect } from "react-redux";
 import "./Home.scss";
 
-const Home = () => {
-  const [selectedTab, setSelectedTab] = useState("shows");
+const Home = props => {
+  const { searchValue, selectedTab, changeSearch, changeTab } = props;
   const [searchResults, setSearchResults] = useState([]);
   const [popularMovies, setPopularMovies] = useState([]);
   const [popularShows, setPopularShows] = useState([]);
-  const [searchValue, setSearchValue] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
   let typingTimer = null;
@@ -121,7 +122,7 @@ const Home = () => {
     const value = event.target.value;
     clearTimeout(typingTimer);
     typingTimer = setTimeout(async () => {
-      setSearchValue(value);
+      changeSearch(value);
     }, 1000);
   };
 
@@ -138,7 +139,7 @@ const Home = () => {
           style={
             selectedTab === "shows" ? { backgroundColor: "lightskyblue" } : null
           }
-          onClick={() => setSelectedTab("shows")}
+          onClick={() => changeTab("shows")}
         >
           Shows
         </button>
@@ -148,7 +149,7 @@ const Home = () => {
               ? { backgroundColor: "lightskyblue" }
               : null
           }
-          onClick={() => setSelectedTab("movies")}
+          onClick={() => changeTab("movies")}
         >
           Movies
         </button>
@@ -168,4 +169,14 @@ const Home = () => {
   );
 };
 
-export default Home;
+const mapStateToProps = ({ reducer: { searchValue, selectedTab } }) => ({
+  searchValue,
+  selectedTab
+});
+
+const mapDispatchToProps = dispatch => ({
+  changeSearch: value => dispatch(changeSearch(value)),
+  changeTab: value => dispatch(changeTab(value))
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(Home);
