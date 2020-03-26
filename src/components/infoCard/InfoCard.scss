@@ -4,6 +4,7 @@
   width: min-content;
   display: flex;
   flex-direction: column;
+  text-align: center;
 }
 
 .InfoCard-ImageWrap {
@@ -13,6 +14,12 @@
   border-radius: 8px;
   cursor: pointer;
   transition: border 0.35s ease;
+  width: 185px;
+  height: 277.5px;
+
+  img {
+    max-width: 100%;
+  }
 
   &:hover {
     border: 8px solid lightseagreen;
@@ -46,9 +53,11 @@
   cursor: pointer;
   text-align: start;
   user-select: none;
+  color: white;
+  transition: color 0.35s ease;
 
   &:hover {
-    color: darkgray;
+    color: black;
   }
 }
 

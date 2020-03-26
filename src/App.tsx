@@ -1,7 +1,6 @@
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import { Home, MovieDetails, ShowDetails } from "./pages";
 import React from "react";
-import "./App.scss";
 
 const App = () => {
   return (

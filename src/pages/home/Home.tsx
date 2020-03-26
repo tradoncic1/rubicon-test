@@ -1,32 +1,66 @@
-import React, { useEffect, useState } from "react";
-import "./Home.scss";
-import movies from "../../api/movies";
+import posterPlaceholder from "../../assets/posterPlaceholder.png";
 import InfoCard from "../../components/infoCard/InfoCard";
-import { getImage780 } from "../../utilities";
-import shows from "../../api/shows";
 import { MovieGenreLookup } from "../../MovieGenreLookup";
 import { ShowGenreLookup } from "../../ShowGenreLookup";
+import Spinner from "../../components/spinner/Spinner";
+import emptyState from "../../assets/emptyState.png";
+import React, { useEffect, useState } from "react";
+import { getImageOriginal } from "../../utilities";
+import movies from "../../api/movies";
+import shows from "../../api/shows";
+import "./Home.scss";
 
 const Home = () => {
   const [selectedTab, setSelectedTab] = useState("movies");
+  const [searchResults, setSearchResults] = useState([]);
   const [popularMovies, setPopularMovies] = useState([]);
   const [popularShows, setPopularShows] = useState([]);
+  const [searchValue, setSearchValue] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+
+  let typingTimer = null;
 
   const fetchPopularMovies = async () => {
+    setIsLoading(true);
     await movies
       .popular()
       .then(response => setPopularMovies(response.data.results.slice(0, 10)));
+    setIsLoading(false);
   };
   const fetchPopularShows = async () => {
+    setIsLoading(true);
     await shows
       .popular()
       .then(response => setPopularShows(response.data.results.slice(0, 10)));
+    setIsLoading(false);
+  };
+
+  const fetchSearch = async value => {
+    setIsLoading(true);
+    if (selectedTab === "movies") {
+      await movies
+        .search(value)
+        .then(response => setSearchResults(response.data.results));
+    } else {
+      await shows
+        .search(value)
+        .then(response => setSearchResults(response.data.results));
+    }
+    setIsLoading(false);
   };
 
   useEffect(() => {
-    if (selectedTab === "movies") fetchPopularMovies();
-    else if (selectedTab === "shows") fetchPopularShows();
-  }, [selectedTab]);
+    if (searchValue.length < 3) {
+      if (selectedTab === "movies") fetchPopularMovies();
+      else if (selectedTab === "shows") fetchPopularShows();
+    } else {
+      fetchSearch(searchValue);
+    }
+
+    return () => {
+      clearTimeout(typingTimer);
+    };
+  }, [selectedTab, searchValue]);
 
   const getMovieGenres = (genreIds: []) => {
     let genreList = [];
@@ -52,31 +86,48 @@ const Home = () => {
     return genreList.slice(0, 2);
   };
 
-  const popularMarkup = (
+  const listMarkup = list => (
     <div className="Home-Popular">
-      {selectedTab === "movies"
-        ? popularMovies.map(movie => (
-            <InfoCard
-              key={movie.id}
-              id={movie.id}
-              name={movie.title}
-              genres={getMovieGenres(movie.genre_ids)}
-              rating={movie.vote_average}
-              imageUrl={getImage780(movie.poster_path)}
-              type="movie"
-            />
-          ))
-        : popularShows.map(show => (
-            <InfoCard
-              key={show.id}
-              id={show.id}
-              name={show.name}
-              genres={getShowGenres(show.genre_ids)}
-              rating={show.vote_average}
-              imageUrl={getImage780(show.poster_path)}
-              type="show"
-            />
-          ))}
+      {list.length > 0 ? (
+        list.map(item => (
+          <InfoCard
+            key={item.id}
+            id={item.id}
+            name={selectedTab === "movies" ? item.title : item.name}
+            genres={
+              selectedTab === "movies"
+                ? getMovieGenres(item.genre_ids)
+                : getShowGenres(item.genre_ids)
+            }
+            rating={item.vote_average}
+            imageUrl={
+              item.poster_path
+                ? getImageOriginal(item.poster_path)
+                : posterPlaceholder
+            }
+            type="movie"
+          />
+        ))
+      ) : (
+        <div className="Home-Empty">
+          <img src={emptyState} alt="Nothing To Show" />
+          <h2>No results matching that search</h2>
+        </div>
+      )}
+    </div>
+  );
+
+  const onSearchChange = async event => {
+    const value = event.target.value;
+    clearTimeout(typingTimer);
+    typingTimer = setTimeout(async () => {
+      setSearchValue(value);
+    }, 1000);
+  };
+
+  const loadingMarkup = (
+    <div className="Home-Loading">
+      <Spinner color="green" />
     </div>
   );
 
@@ -87,8 +138,17 @@ const Home = () => {
         <button onClick={() => setSelectedTab("movies")}>Movies</button>
         <button onClick={() => setSelectedTab("shows")}>Shows</button>
       </div>
-      <input />
-      {popularMarkup}
+      <input
+        className="Home-Input"
+        type="text"
+        onChange={onSearchChange}
+        placeholder={`Search ${selectedTab}`}
+      />
+      {!isLoading
+        ? searchValue.length < 3
+          ? listMarkup(selectedTab === "movies" ? popularMovies : popularShows)
+          : listMarkup(searchResults)
+        : loadingMarkup}
     </div>
   );
 };

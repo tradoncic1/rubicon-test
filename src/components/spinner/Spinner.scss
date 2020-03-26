@@ -1,0 +1,30 @@
+.Spinner {
+  animation-name: spin;
+  animation-duration: 1000ms;
+  animation-iteration-count: infinite;
+  animation-timing-function: linear;
+}
+
+.Spinner-large {
+  width: 64px;
+  height: 64px;
+}
+
+.Spinner-medium {
+  width: 48px;
+  height: 48px;
+}
+
+.Spinner-small {
+  width: 32px;
+  height: 32px;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
