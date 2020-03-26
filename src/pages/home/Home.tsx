@@ -11,7 +11,7 @@ import shows from "../../api/shows";
 import "./Home.scss";
 
 const Home = () => {
-  const [selectedTab, setSelectedTab] = useState("movies");
+  const [selectedTab, setSelectedTab] = useState("shows");
   const [searchResults, setSearchResults] = useState([]);
   const [popularMovies, setPopularMovies] = useState([]);
   const [popularShows, setPopularShows] = useState([]);
@@ -136,6 +136,14 @@ const Home = () => {
       <div className="Home-Tabs">
         <button
           style={
+            selectedTab === "shows" ? { backgroundColor: "lightskyblue" } : null
+          }
+          onClick={() => setSelectedTab("shows")}
+        >
+          Shows
+        </button>
+        <button
+          style={
             selectedTab === "movies"
               ? { backgroundColor: "lightskyblue" }
               : null
@@ -143,14 +151,6 @@ const Home = () => {
           onClick={() => setSelectedTab("movies")}
         >
           Movies
-        </button>
-        <button
-          style={
-            selectedTab === "shows" ? { backgroundColor: "lightskyblue" } : null
-          }
-          onClick={() => setSelectedTab("shows")}
-        >
-          Shows
         </button>
       </div>
       <input
