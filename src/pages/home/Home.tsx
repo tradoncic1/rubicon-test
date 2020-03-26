@@ -133,10 +133,25 @@ const Home = () => {
 
   return (
     <div className="Home-Page">
-      Home page
       <div className="Home-Tabs">
-        <button onClick={() => setSelectedTab("movies")}>Movies</button>
-        <button onClick={() => setSelectedTab("shows")}>Shows</button>
+        <button
+          style={
+            selectedTab === "movies"
+              ? { backgroundColor: "lightskyblue" }
+              : null
+          }
+          onClick={() => setSelectedTab("movies")}
+        >
+          Movies
+        </button>
+        <button
+          style={
+            selectedTab === "shows" ? { backgroundColor: "lightskyblue" } : null
+          }
+          onClick={() => setSelectedTab("shows")}
+        >
+          Shows
+        </button>
       </div>
       <input
         className="Home-Input"
