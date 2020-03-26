@@ -9,5 +9,7 @@ export default {
   search: (query: string) =>
     axios.get(
       `${BASE_URL}/search/movie?api_key=${API_KEY}&language=en-US&query=${query}&page=1`
-    )
+    ),
+  details: (id: number) =>
+    axios.get(`${BASE_URL}/movie/${id}?api_key=${API_KEY}&language=en-US`)
 };

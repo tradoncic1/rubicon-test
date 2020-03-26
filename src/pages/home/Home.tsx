@@ -1,12 +1,14 @@
+import {
+  getImageOriginal,
+  getMovieGenres,
+  getShowGenres
+} from "../../utilities";
 import posterPlaceholder from "../../assets/posterPlaceholder.png";
 import { changeSearch, changeTab } from "../../redux/actions";
 import InfoCard from "../../components/infoCard/InfoCard";
-import { MovieGenreLookup } from "../../MovieGenreLookup";
-import { ShowGenreLookup } from "../../ShowGenreLookup";
 import Spinner from "../../components/spinner/Spinner";
 import emptyState from "../../assets/emptyState.png";
 import React, { useEffect, useState } from "react";
-import { getImageOriginal } from "../../utilities";
 import movies from "../../api/movies";
 import shows from "../../api/shows";
 import { connect } from "react-redux";
@@ -63,30 +65,6 @@ const Home = props => {
     };
   }, [selectedTab, searchValue]);
 
-  const getMovieGenres = (genreIds: []) => {
-    let genreList = [];
-
-    genreIds.forEach(genre => {
-      MovieGenreLookup.forEach(movieGenre =>
-        genre === movieGenre.id ? genreList.push(movieGenre.name) : null
-      );
-    });
-
-    return genreList.slice(0, 2);
-  };
-
-  const getShowGenres = (genreIds: []) => {
-    let genreList = [];
-
-    genreIds.forEach(genre => {
-      ShowGenreLookup.forEach(showGenre =>
-        genre === showGenre.id ? genreList.push(showGenre.name) : null
-      );
-    });
-
-    return genreList.slice(0, 2);
-  };
-
   const listMarkup = list => (
     <div className="Home-Popular">
       {list.length > 0 ? (
@@ -97,8 +75,8 @@ const Home = props => {
             name={selectedTab === "movies" ? item.title : item.name}
             genres={
               selectedTab === "movies"
-                ? getMovieGenres(item.genre_ids)
-                : getShowGenres(item.genre_ids)
+                ? getMovieGenres(item.genre_ids).slice(0, 2)
+                : getShowGenres(item.genre_ids).slice(0, 2)
             }
             rating={item.vote_average}
             imageUrl={
@@ -106,7 +84,7 @@ const Home = props => {
                 ? getImageOriginal(item.poster_path)
                 : posterPlaceholder
             }
-            type="movie"
+            type={selectedTab === "movies" ? "movie" : "show"}
           />
         ))
       ) : (
@@ -157,6 +135,7 @@ const Home = props => {
       <input
         className="Home-Input"
         type="text"
+        defaultValue={searchValue}
         onChange={onSearchChange}
         placeholder={`Search ${selectedTab}`}
       />
