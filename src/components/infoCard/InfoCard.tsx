@@ -1,8 +1,8 @@
-import { useHistory } from "react-router-dom";
+import { Link } from "react-router-dom";
 import React from "react";
 import "./InfoCard.scss";
 
-type Type = "movie" | "show";
+type Type = "movie" | "tv";
 
 interface InfoCardProps {
   // movie/show id in the db
@@ -27,12 +27,6 @@ const InfoCard = ({
   rating,
   type
 }: InfoCardProps) => {
-  let history = useHistory();
-
-  const linkToDetails = () => {
-    history.push(`/${type}/${id}`);
-  };
-
   return (
     <div className="InfoCard-Wrap">
       <div className="InfoCard-ImageWrap">
@@ -43,9 +37,9 @@ const InfoCard = ({
               <h2 key={index}>{genre}</h2>
             ))}
           </div>
-          <div className="InfoCard-View" onClick={linkToDetails}>
+          <Link className="InfoCard-View" to={`/${type}/${id}`}>
             View Details
-          </div>
+          </Link>
         </div>
         <img
           className="InfoCard-Text InfoCard-Image"
@@ -53,9 +47,9 @@ const InfoCard = ({
           alt={name}
         />
       </div>
-      <h2 className="InfoCard-Text InfoCard-Name" onClick={linkToDetails}>
-        {name}
-      </h2>
+      <Link className="InfoCard-Text InfoCard-Name" to={`/${type}/${id}`}>
+        <h2>{name}</h2>
+      </Link>
     </div>
   );
 };

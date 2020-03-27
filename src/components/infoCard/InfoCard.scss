@@ -54,6 +54,7 @@
   text-align: start;
   user-select: none;
   color: white;
+  text-decoration: none;
   transition: color 0.35s ease;
 
   &:hover {
@@ -71,6 +72,8 @@
   height: 46px;
   transform: translateY(50px);
   opacity: 0;
+  text-decoration: none;
+  color: white;
   transition: transform 0.35s ease, opacity 0.15s ease,
     background-color 0.35s ease;
 

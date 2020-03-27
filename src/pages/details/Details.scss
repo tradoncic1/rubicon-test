@@ -26,8 +26,7 @@
 }
 
 .Details-Poster {
-  min-width: 285px;
-  width: 325px;
+  height: 450px;
   border: 8px solid lightskyblue;
   border-radius: 8px;
 }
@@ -65,10 +64,21 @@
   }
 }
 
+.Details-Loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 10%;
+}
+
 @media screen and (max-width: 768px) {
   .Details-Main {
     flex-direction: column;
     align-items: center;
+  }
+
+  .Details-Poster {
+    height: 350px;
   }
 
   .Details-Info {

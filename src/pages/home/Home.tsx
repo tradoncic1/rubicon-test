@@ -9,53 +9,37 @@ import InfoCard from "../../components/infoCard/InfoCard";
 import Spinner from "../../components/spinner/Spinner";
 import emptyState from "../../assets/emptyState.png";
 import React, { useEffect, useState } from "react";
-import movies from "../../api/movies";
-import shows from "../../api/shows";
 import { connect } from "react-redux";
 import "./Home.scss";
+import requests from "../../api/requests";
 
 const Home = props => {
   const { searchValue, selectedTab, changeSearch, changeTab } = props;
   const [searchResults, setSearchResults] = useState([]);
-  const [popularMovies, setPopularMovies] = useState([]);
-  const [popularShows, setPopularShows] = useState([]);
+  const [popularList, setPopularList] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
 
   let typingTimer = null;
 
-  const fetchPopularMovies = async () => {
+  const fetchPopular = async () => {
     setIsLoading(true);
-    await movies
-      .popular()
-      .then(response => setPopularMovies(response.data.results.slice(0, 10)));
-    setIsLoading(false);
-  };
-  const fetchPopularShows = async () => {
-    setIsLoading(true);
-    await shows
-      .popular()
-      .then(response => setPopularShows(response.data.results.slice(0, 10)));
+    await requests
+      .popular(selectedTab)
+      .then(response => setPopularList(response.data.results.slice(0, 10)));
     setIsLoading(false);
   };
 
   const fetchSearch = async value => {
     setIsLoading(true);
-    if (selectedTab === "movies") {
-      await movies
-        .search(value)
-        .then(response => setSearchResults(response.data.results));
-    } else {
-      await shows
-        .search(value)
-        .then(response => setSearchResults(response.data.results));
-    }
+    await requests
+      .search(selectedTab, value)
+      .then(response => setSearchResults(response.data.results));
     setIsLoading(false);
   };
 
   useEffect(() => {
     if (searchValue.length < 3) {
-      if (selectedTab === "movies") fetchPopularMovies();
-      else if (selectedTab === "shows") fetchPopularShows();
+      fetchPopular();
     } else {
       fetchSearch(searchValue);
     }
@@ -72,9 +56,9 @@ const Home = props => {
           <InfoCard
             key={item.id}
             id={item.id}
-            name={selectedTab === "movies" ? item.title : item.name}
+            name={selectedTab === "movie" ? item.title : item.name}
             genres={
-              selectedTab === "movies"
+              selectedTab === "movie"
                 ? getMovieGenres(item.genre_ids).slice(0, 2)
                 : getShowGenres(item.genre_ids).slice(0, 2)
             }
@@ -84,7 +68,7 @@ const Home = props => {
                 ? getImageOriginal(item.poster_path)
                 : posterPlaceholder
             }
-            type={selectedTab === "movies" ? "movie" : "show"}
+            type={selectedTab}
           />
         ))
       ) : (
@@ -115,19 +99,17 @@ const Home = props => {
       <div className="Home-Tabs">
         <button
           style={
-            selectedTab === "shows" ? { backgroundColor: "lightskyblue" } : null
+            selectedTab === "tv" ? { backgroundColor: "lightskyblue" } : null
           }
-          onClick={() => changeTab("shows")}
+          onClick={() => changeTab("tv")}
         >
           Shows
         </button>
         <button
           style={
-            selectedTab === "movies"
-              ? { backgroundColor: "lightskyblue" }
-              : null
+            selectedTab === "movie" ? { backgroundColor: "lightskyblue" } : null
           }
-          onClick={() => changeTab("movies")}
+          onClick={() => changeTab("movie")}
         >
           Movies
         </button>
@@ -141,7 +123,7 @@ const Home = props => {
       />
       {!isLoading
         ? searchValue.length < 3
-          ? listMarkup(selectedTab === "movies" ? popularMovies : popularShows)
+          ? listMarkup(popularList)
           : listMarkup(searchResults)
         : loadingMarkup}
     </div>

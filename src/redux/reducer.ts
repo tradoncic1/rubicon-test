@@ -2,7 +2,7 @@ import ReduxTypes from "./types";
 
 const INITIAL_STATE = {
   searchValue: "",
-  selectedTab: "shows"
+  selectedTab: "tv"
 };
 
 const reducer = (state = INITIAL_STATE, action) => {
