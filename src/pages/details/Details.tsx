@@ -1,9 +1,9 @@
 import posterPlaceholder from "../../assets/posterPlaceholder.png";
-import Spinner from "../../components/spinner/Spinner";
 import React, { useEffect, useState } from "react";
 import { getImageOriginal } from "../../utilities";
 import imdbLogo from "../../assets/imdbLogo.png";
 import requests from "../../api/requests";
+import { Spinner } from "../../components";
 import { Link } from "react-router-dom";
 import { connect } from "react-redux";
 import YouTube from "react-youtube";
@@ -44,7 +44,6 @@ const Details = props => {
   }, []);
 
   const _onReady = event => {
-    // access to player in all event handlers via event.target
     event.target.pauseVideo();
   };
 

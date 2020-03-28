@@ -1,7 +1,6 @@
 import { changeSearch, changeTab, changePage } from "../../redux/actions";
 import posterPlaceholder from "../../assets/posterPlaceholder.png";
-import InfoCard from "../../components/infoCard/InfoCard";
-import Spinner from "../../components/spinner/Spinner";
+import { InfoCard, Spinner, InfoComponent } from "../../components";
 import emptyState from "../../assets/emptyState.png";
 import React, { useEffect, useState } from "react";
 import requests from "../../api/requests";
@@ -26,6 +25,7 @@ const Home = props => {
   const [popularList, setPopularList] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [totalPages, setTotalPages] = useState(0);
+  const [failed, setFailed] = useState(false);
 
   let typingTimer = null;
 
@@ -33,16 +33,24 @@ const Home = props => {
     setIsLoading(true);
     await requests
       .popular(selectedTab, 1)
-      .then(response => setPopularList(response.data.results.slice(0, 10)));
+      .then(response => {
+        setPopularList(response.data.results.slice(0, 10));
+        setFailed(false);
+      })
+      .catch(() => setFailed(true));
     setIsLoading(false);
   };
 
   const fetchSearch = async value => {
     setIsLoading(true);
-    await requests.search(selectedTab, value, page).then(response => {
-      setSearchResults(response.data.results);
-      setTotalPages(response.data.total_pages);
-    });
+    await requests
+      .search(selectedTab, value, page)
+      .then(response => {
+        setSearchResults(response.data.results);
+        setTotalPages(response.data.total_pages);
+        setFailed(false);
+      })
+      .catch(() => setFailed(true));
     setIsLoading(false);
   };
 
@@ -81,10 +89,10 @@ const Home = props => {
           />
         ))
       ) : (
-        <div className="Home-Empty">
-          <img src={emptyState} alt="Nothing To Show" />
-          <h2>No results matching that search</h2>
-        </div>
+        <InfoComponent
+          image={emptyState}
+          text="No results matching that search"
+        />
       )}
     </div>
   );
@@ -137,7 +145,12 @@ const Home = props => {
         onChange={onSearchChange}
         placeholder={`Search ${selectedTab === "movie" ? "movies" : "shows"}`}
       />
-      {searchValue.length > 3 ? (
+      {failed ? (
+        <InfoComponent
+          image={emptyState}
+          text="Something went wrong! refresh or try again later."
+        />
+      ) : searchValue.length >= 3 ? (
         <div className="Home-ButtonGroup Home-Pagination">
           <button
             className={`${page === 1 ? "Home-Pagination-Disabled" : ""}`}
