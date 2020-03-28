@@ -1,5 +1,5 @@
 # MovieDB
-## What is the use
+## What's it for
 This project was created as an assignemnt given by RUBICON d.o.o.
 It's purpose is to serve as a movie and TV show database web application.
 It allows the users to view the current top 10 popular movies and shows, also providing a basic search functionality.
