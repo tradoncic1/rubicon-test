@@ -1,3 +1,4 @@
+import posterPlaceholder from "../../assets/posterPlaceholder.png";
 import Spinner from "../../components/spinner/Spinner";
 import React, { useEffect, useState } from "react";
 import { getImageOriginal } from "../../utilities";
@@ -69,7 +70,11 @@ const Details = props => {
           ) : (
             <img
               className="Details-Poster"
-              src={getImageOriginal(details.poster_path)}
+              src={
+                details.poster_path
+                  ? getImageOriginal(details.poster_path)
+                  : posterPlaceholder
+              }
               alt="Poster"
             />
           )}
@@ -80,7 +85,7 @@ const Details = props => {
             <div className="Details-Genres">
               {details.genres?.map((genre, index) => {
                 if (index < details.genres.length - 1)
-                  return <h2 key={genre.id}>{genre.name}/</h2>;
+                  return <h2 key={genre.id}>{genre.name}</h2>;
                 else return <h2 key={genre.id}>{genre.name}</h2>;
               })}
             </div>
@@ -90,7 +95,7 @@ const Details = props => {
                   <img className="Details-Imdb" src={imdbLogo} alt="imdbLogo" />
                 </a>
               ) : null}
-              <h2>{details.vote_average} / 10 ★</h2>
+              <h2>★ {details.vote_average} / 10</h2>
             </div>
             <div className="Details-Overview">
               <h2>Synopsis</h2>

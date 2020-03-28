@@ -2,7 +2,8 @@ import ReduxTypes from "./types";
 
 const INITIAL_STATE = {
   searchValue: "",
-  selectedTab: "tv"
+  selectedTab: "tv",
+  page: 1
 };
 
 const reducer = (state = INITIAL_STATE, action) => {
@@ -16,6 +17,11 @@ const reducer = (state = INITIAL_STATE, action) => {
       return {
         ...state,
         selectedTab: action.payload
+      };
+    case ReduxTypes.CHANGE_PAGE:
+      return {
+        ...state,
+        page: action.payload
       };
     default:
       return state;

@@ -5,18 +5,17 @@
   justify-content: center;
 }
 
-.Home-Tabs {
+.Home-ButtonGroup {
   display: flex;
   justify-content: flex-start;
   padding: 8px;
 
   button {
-    // height: 32px;
-    // width: 64px;
     padding: 8px 24px;
     border: none;
     transition: background-color 0.25s ease;
     cursor: pointer;
+    background-color: whitesmoke;
 
     &:hover {
       background-color: lightsteelblue;
@@ -31,6 +30,27 @@
   button:last-child {
     border-top-right-radius: 4px;
     border-bottom-right-radius: 4px;
+  }
+}
+
+.Home-Pagination {
+  button {
+    width: 86px;
+  }
+
+  button:nth-child(2) {
+    width: 48px;
+    text-align: center;
+    padding: unset;
+    background-color: whitesmoke;
+    border-right: 1px solid lightgray;
+    border-left: 1px solid lightgray;
+  }
+}
+
+.Home-Pagination-Disabled {
+  button:first-child:hover {
+    background-color: whitesmoke;
   }
 }
 
@@ -63,5 +83,11 @@
   img {
     width: 256px;
     height: 256px;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .Home-Pagination {
+    justify-content: center;
   }
 }

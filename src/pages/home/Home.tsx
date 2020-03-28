@@ -1,39 +1,48 @@
+import { changeSearch, changeTab, changePage } from "../../redux/actions";
+import posterPlaceholder from "../../assets/posterPlaceholder.png";
+import InfoCard from "../../components/infoCard/InfoCard";
+import Spinner from "../../components/spinner/Spinner";
+import emptyState from "../../assets/emptyState.png";
+import React, { useEffect, useState } from "react";
+import requests from "../../api/requests";
+import { connect } from "react-redux";
 import {
   getImageOriginal,
   getMovieGenres,
   getShowGenres
 } from "../../utilities";
-import posterPlaceholder from "../../assets/posterPlaceholder.png";
-import { changeSearch, changeTab } from "../../redux/actions";
-import InfoCard from "../../components/infoCard/InfoCard";
-import Spinner from "../../components/spinner/Spinner";
-import emptyState from "../../assets/emptyState.png";
-import React, { useEffect, useState } from "react";
-import { connect } from "react-redux";
 import "./Home.scss";
-import requests from "../../api/requests";
 
 const Home = props => {
-  const { searchValue, selectedTab, changeSearch, changeTab } = props;
+  const {
+    searchValue,
+    selectedTab,
+    page,
+    changeSearch,
+    changeTab,
+    changePage
+  } = props;
   const [searchResults, setSearchResults] = useState([]);
   const [popularList, setPopularList] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [totalPages, setTotalPages] = useState(0);
 
   let typingTimer = null;
 
   const fetchPopular = async () => {
     setIsLoading(true);
     await requests
-      .popular(selectedTab)
+      .popular(selectedTab, 1)
       .then(response => setPopularList(response.data.results.slice(0, 10)));
     setIsLoading(false);
   };
 
   const fetchSearch = async value => {
     setIsLoading(true);
-    await requests
-      .search(selectedTab, value)
-      .then(response => setSearchResults(response.data.results));
+    await requests.search(selectedTab, value, page).then(response => {
+      setSearchResults(response.data.results);
+      setTotalPages(response.data.total_pages);
+    });
     setIsLoading(false);
   };
 
@@ -47,7 +56,7 @@ const Home = props => {
     return () => {
       clearTimeout(typingTimer);
     };
-  }, [selectedTab, searchValue]);
+  }, [selectedTab, searchValue, page]);
 
   const listMarkup = list => (
     <div className="Home-Popular">
@@ -96,12 +105,15 @@ const Home = props => {
 
   return (
     <div className="Home-Page">
-      <div className="Home-Tabs">
+      <div className="Home-ButtonGroup">
         <button
           style={
             selectedTab === "tv" ? { backgroundColor: "lightskyblue" } : null
           }
-          onClick={() => changeTab("tv")}
+          onClick={() => {
+            changeTab("tv");
+            changePage(1);
+          }}
         >
           Shows
         </button>
@@ -109,18 +121,40 @@ const Home = props => {
           style={
             selectedTab === "movie" ? { backgroundColor: "lightskyblue" } : null
           }
-          onClick={() => changeTab("movie")}
+          onClick={() => {
+            changeTab("movie");
+            changePage(1);
+          }}
         >
           Movies
         </button>
       </div>
+
       <input
         className="Home-Input"
         type="text"
         defaultValue={searchValue}
         onChange={onSearchChange}
-        placeholder={`Search ${selectedTab}`}
+        placeholder={`Search ${selectedTab === "movie" ? "movies" : "shows"}`}
       />
+      {searchValue.length > 3 ? (
+        <div
+          className={`Home-ButtonGroup Home-Pagination ${
+            page === 1 || page === totalPages ? "Home-Pagination-Disabled" : ""
+          }`}
+        >
+          <button disabled={page === 1} onClick={() => changePage(page - 1)}>
+            Previous
+          </button>
+          <button disabled>{page}</button>
+          <button
+            disabled={page === totalPages}
+            onClick={() => changePage(page + 1)}
+          >
+            Next
+          </button>
+        </div>
+      ) : null}
       {!isLoading
         ? searchValue.length < 3
           ? listMarkup(popularList)
@@ -130,14 +164,16 @@ const Home = props => {
   );
 };
 
-const mapStateToProps = ({ reducer: { searchValue, selectedTab } }) => ({
+const mapStateToProps = ({ reducer: { searchValue, selectedTab, page } }) => ({
   searchValue,
-  selectedTab
+  selectedTab,
+  page
 });
 
 const mapDispatchToProps = dispatch => ({
   changeSearch: value => dispatch(changeSearch(value)),
-  changeTab: value => dispatch(changeTab(value))
+  changeTab: value => dispatch(changeTab(value)),
+  changePage: value => dispatch(changePage(value))
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Home);
