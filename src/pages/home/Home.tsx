@@ -138,20 +138,41 @@ const Home = props => {
         placeholder={`Search ${selectedTab === "movie" ? "movies" : "shows"}`}
       />
       {searchValue.length > 3 ? (
-        <div
-          className={`Home-ButtonGroup Home-Pagination ${
-            page === 1 || page === totalPages ? "Home-Pagination-Disabled" : ""
-          }`}
-        >
-          <button disabled={page === 1} onClick={() => changePage(page - 1)}>
+        <div className="Home-ButtonGroup Home-Pagination">
+          <button
+            className={`${page === 1 ? "Home-Pagination-Disabled" : ""}`}
+            disabled={page === 1}
+            onClick={() => changePage(1)}
+          >
+            First
+          </button>
+          <button
+            className={`${page === 1 ? "Home-Pagination-Disabled" : ""}`}
+            disabled={page === 1}
+            onClick={() => changePage(page - 1)}
+          >
             Previous
           </button>
-          <button disabled>{page}</button>
+          <button className="Home-Pagination-Disabled" disabled>
+            {page}
+          </button>
           <button
+            className={`${
+              page === totalPages ? "Home-Pagination-Disabled" : ""
+            }`}
             disabled={page === totalPages}
             onClick={() => changePage(page + 1)}
           >
             Next
+          </button>
+          <button
+            className={`${
+              page === totalPages ? "Home-Pagination-Disabled" : ""
+            }`}
+            disabled={page === totalPages}
+            onClick={() => changePage(totalPages)}
+          >
+            Last
           </button>
         </div>
       ) : null}

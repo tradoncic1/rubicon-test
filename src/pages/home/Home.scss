@@ -11,7 +11,7 @@
   padding: 8px;
 
   button {
-    padding: 8px 24px;
+    padding: 8px 16px;
     border: none;
     transition: background-color 0.25s ease;
     cursor: pointer;
@@ -35,10 +35,10 @@
 
 .Home-Pagination {
   button {
-    width: 86px;
+    width: 72px;
   }
 
-  button:nth-child(2) {
+  button:nth-child(3) {
     width: 48px;
     text-align: center;
     padding: unset;
@@ -49,8 +49,8 @@
 }
 
 .Home-Pagination-Disabled {
-  button:first-child:hover {
-    background-color: whitesmoke;
+  &:hover {
+    background-color: whitesmoke !important;
   }
 }
 
